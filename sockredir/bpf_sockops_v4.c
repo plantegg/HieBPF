@@ -1,4 +1,5 @@
-#include <uapi/linux/bpf.h>
+#include <linux/bpf.h>
+
 #include "bpf_sockops.h"
 
 
@@ -39,15 +40,10 @@ void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
 __section("sockops")
 int bpf_sockops_v4(struct bpf_sock_ops *skops)
 {
-	uint32_t family, op;
-
-	family = skops->family;
-	op = skops->op;
-
-	switch (op) {
+	switch (skops->op) {
         case BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB:
         case BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB:
-		if (family == 2) { //AF_INET
+		if (skops->family == 2) { //AF_INET
                         bpf_sock_ops_ipv4(skops);
 		}
                 break;

@@ -1,4 +1,4 @@
-#include <swab.h>
+#include <linux/swab.h>
 
 #ifndef __section
 #define __section(NAME) 	\
@@ -43,15 +43,14 @@
     })
 #endif
 
-
 /* ebpf helper function
  * The generated function is used for parameter verification
  * by the eBPF verifier
  */
 static int BPF_FUNC(msg_redirect_hash, struct sk_msg_md *md,
-			void *map, void *key, uint64_t flag);
+			void *map, void *key, __u64 flag);
 static int BPF_FUNC(sock_hash_update, struct bpf_sock_ops *skops,
-			void *map, void *key, uint64_t flags);
+			void *map, void *key, __u64 flags);
 static void BPF_FUNC(trace_printk, const char *fmt, int fmt_size, ...);
 
 /*
@@ -60,27 +59,23 @@ static void BPF_FUNC(trace_printk, const char *fmt, int fmt_size, ...);
  * from iproute2/bpf_elf.h?
  */
 struct bpf_map_def {
-	uint32_t type;
-	uint32_t key_size;
-	uint32_t value_size;
-	uint32_t max_entries;
-	uint32_t map_flags;
+	__u32 type;
+	__u32 key_size;
+	__u32 value_size;
+	__u32 max_entries;
+	__u32 map_flags;
 };
 
 struct sock_key {
-	uint32_t sip4;
-	uint32_t dip4;
-	uint8_t  family;
-	uint8_t  pad1;
-	uint16_t pad2;
-	// this padding required for 64bit alignment
-	// else ebpf kernel verifier rejects loading
-	// of the program
-	uint32_t pad3;
-	uint32_t sport;
-	uint32_t dport;
+	__u32 sip4;
+	__u32 dip4;
+	__u8  family;
+	__u8  pad1;   // this padding required for 64bit alignment
+	__u16 pad2;   // else ebpf kernel verifier rejects loading of the program
+	__u32 pad3;
+	__u32 sport;
+	__u32 dport;
 } __attribute__((packed));
-
 
 struct bpf_map_def __section("maps") sock_ops_map = {
 	.type           = BPF_MAP_TYPE_SOCKHASH,

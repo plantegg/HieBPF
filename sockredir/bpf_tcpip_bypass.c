@@ -1,4 +1,4 @@
-#include <uapi/linux/bpf.h>
+#include <linux/bpf.h>
 
 #include "bpf_sockops.h"
 
@@ -22,6 +22,7 @@ int bpf_tcpip_bypass(struct sk_msg_md *msg)
     struct  sock_key key = {};
     sk_msg_extract4_key(msg, &key);
     msg_redirect_hash(msg, &sock_ops_map, &key, BPF_F_INGRESS);
+    printk("redir msg\n");
     return SK_PASS;
 }
 
