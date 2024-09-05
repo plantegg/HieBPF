@@ -25,6 +25,10 @@ static inline
 void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
 {
 	struct sock_key key = {};
+
+	//skip port 10000, 10000端口作为正常流量进行对比
+	if(bpf_ntohl(skops->remote_port)==10000 || skops->local_port==10000)
+		return ;
 	
 	sk_extractv4_key(skops, &key);
 
