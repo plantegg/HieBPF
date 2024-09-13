@@ -1,0 +1,31 @@
+Req/Resp size: 64 128
+205,402,415
+netperf: remote error -1198,400,414
+netperf: remote error -1
+Req/Resp size: 64 256
+191,399,413
+netperf: remote error -1201,401,415
+netperf: remote error -1
+Req/Resp size: 64 512
+200,401,414
+netperf: remote error -1196,401,413
+netperf: remote error -1
+Req/Resp size: 64 1024
+202,402,414
+netperf: remote error -1198,401,415
+netperf: remote error -1
+Req/Resp size: 64 2048
+200,401,414
+netperf: remote error -1198,400,414
+netperf: remote error -1
+Req/Resp size: 64 4096
+191,399,413
+netperf: remote error -1202,402,415
+netperf: remote error -1
+Req/Resp size: 64 8192
+208,403,416
+netperf: remote error -1204,402,415
+netperf: remote error -1
+Req/Resp size: 64 16384
+203,402,417
+netperf: remote error -1201,402,416

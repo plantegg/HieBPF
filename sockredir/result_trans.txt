@@ -1,0 +1,108 @@
+Req/Resp size: 64 128
+5.407
+8.3607
+
+Req/Resp size: 64 256
+5.18431
+7.77229
+
+Req/Resp size: 64 512
+5.34388
+9.26989
+
+Req/Resp size: 64 1024
+4.9821
+11.9528
+
+Req/Resp size: 64 2048
+5.3183
+9.46772
+
+Req/Resp size: 64 4096
+4.57616
+9.10712
+
+Req/Resp size: 64 8192
+40.4754
+250.292
+
+Req/Resp size: 64 16384
+75.934
+221.65
+
+Req/Resp size: 64 32768
+70.2756
+179.997
+
+Req/Resp size: 128 128
+89.4062
+266.106
+
+Req/Resp size: 128 256
+89.3197
+264.094
+
+Req/Resp size: 128 512
+88.7189
+263.458
+
+Req/Resp size: 128 1024
+88.5843
+262.534
+
+Req/Resp size: 128 2048
+87.9146
+260.563
+
+Req/Resp size: 128 4096
+87.8324
+259.282
+
+Req/Resp size: 128 8192
+81.6163
+250.077
+
+Req/Resp size: 128 16384
+75.9511
+222.212
+
+Req/Resp size: 128 32768
+71.1549
+70.6144
+
+Req/Resp size: 256 128
+
+Req/Resp size: 256 256
+
+Req/Resp size: 256 512
+
+Req/Resp size: 256 1024
+
+Req/Resp size: 256 2048
+
+Req/Resp size: 256 4096
+
+Req/Resp size: 256 8192
+
+Req/Resp size: 256 16384
+
+Req/Resp size: 256 32768
+
+Req/Resp size: 512 128
+
+Req/Resp size: 512 256
+
+Req/Resp size: 512 512
+
+Req/Resp size: 512 1024
+
+Req/Resp size: 512 2048
+
+Req/Resp size: 512 4096
+
+Req/Resp size: 512 8192
+
+Req/Resp size: 512 16384
+
+Req/Resp size: 512 32768
+

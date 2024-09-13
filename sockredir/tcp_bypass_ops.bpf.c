@@ -1,6 +1,6 @@
 #include <linux/bpf.h>
 
-#include "bpf_sockops.h"
+#include "tcp_bypass_ops.h"
 
 
 /*
@@ -33,6 +33,8 @@ void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
 	sk_extractv4_key(skops, &key);
 
 	// insert the source socket in the sock_ops_map
+	//定义在 include/uapi/linux/bpf.h 中,OS 提供的能力
+	//bpf.h 种的函数被libbpf 重新在 bpf_helper_defs.h 中封装
 	int ret = sock_hash_update(skops, &sock_ops_map, &key, BPF_NOEXIST);
 	printk("<<< ipv4 op = %d, port %d --> %d\n", 
 		skops->op, skops->local_port, bpf_ntohl(skops->remote_port));
@@ -41,7 +43,7 @@ void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
 	}
 }
 
-__section("sockops")
+SEC("sockops")
 int bpf_sockops_v4(struct bpf_sock_ops *skops)
 {
 	switch (skops->op) {
