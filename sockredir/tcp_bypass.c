@@ -18,7 +18,6 @@ int main(int argc, char **argv)
 		fprintf(stderr, "ERROR: get cgroup %s fd failed\n", "/tmp/unified/");
 		return -1;
 	}
-	printf("cgfd = %d\n", cgfd);
 
 	//open and load, create ebpf prog and maps
 	skel = tcp_bypass_bpf__open_and_load();
@@ -29,33 +28,22 @@ int main(int argc, char **argv)
 
 	fprintf(stdout, "debug attach\n");
 	//attach
-	bpf_program__attach_cgroup(skel->progs.bpf_sockops_v4, cgfd);	
+	bpf_program__attach_cgroup(skel->progs.sockops_v4, cgfd);	
 	
-	sock_map_id = bpf_map__fd(skel->maps.sock_ops_map);
+	sock_map_id = bpf_map__fd(skel->maps.socks_map);
 
-	fprintf(stdout, "debug map id: %d\n", sock_map_id);
-	
-	prog_fd = bpf_program__fd(skel->progs.bpf_tcpip_bypass);
-
-	fprintf(stdout, "debug attach skeleton prog_fd:%d, map_id:%d\n", prog_fd, sock_map_id);
+	prog_fd = bpf_program__fd(skel->progs.tcp_bypass);
 	err = bpf_prog_attach(prog_fd, sock_map_id, BPF_SK_MSG_VERDICT, 0);
 	
-	fprintf(stdout, "end debug attach skeleton\n");
-	if (!prog_fd) {
-        	fprintf(stderr, "Failed to attach FD\n");
-    		err=-1;
-	}
-	if (!err) {
+	if (err) {
         	fprintf(stderr, "Failed to attach FD2:%d\n", err);
     		err=-2;
+		goto cleanup;
 	}
-	
-        fprintf(stderr, "sleep\n");
+	fprintf(stdout, "tcp bypass bpf is running\n");	
 	sleep(10000);
 
 cleanup:
         tcp_bypass_bpf__destroy(skel);
-        return -err;
-
+        return err;
 }
-

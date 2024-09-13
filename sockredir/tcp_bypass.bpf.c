@@ -4,7 +4,9 @@
 
 #include "tcp_bypass.h"
 
-/* extract the key that identifies the destination socket in the sock_ops_map */
+char LICENSE[] SEC("license") = "Dual BSD/GPL";
+
+/* extract the key that identifies the destination socket in the socks_map */
 static inline
 void sk_msg_extract4_key(struct sk_msg_md *msg,
 	struct sock_key *key)
@@ -48,10 +50,10 @@ void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
 	
 	sk_extractv4_key(skops, &key);
 
-	// insert the source socket in the sock_ops_map
+	// insert the source socket in the socks_map
 	//定义在 include/uapi/linux/bpf.h 中,OS 提供的能力
-	//bpf.h 种的函数被libbpf 重新在 bpf_helper_defs.h 中封装
-	int ret = bpf_sock_hash_update(skops, &sock_ops_map, &key, BPF_NOEXIST);
+	//bpf.h 中的函数被libbpf 重新在 bpf_helper_defs.h 中封装
+	int ret = bpf_sock_hash_update(skops, &socks_map, &key, BPF_NOEXIST);
 	printk("<<< ipv4 op = %d, port %d --> %d\n", 
 		skops->op, skops->local_port, bpf_ntohl(skops->remote_port));
 	if (ret != 0) {
@@ -60,7 +62,7 @@ void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
 }
 
 SEC("sockops")
-int bpf_sockops_v4(struct bpf_sock_ops *skops)
+int sockops_v4(struct bpf_sock_ops *skops)
 {
 	switch (skops->op) {
         case BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB:
@@ -76,17 +78,14 @@ int bpf_sockops_v4(struct bpf_sock_ops *skops)
 }
 
 SEC("sk_msg")
-int bpf_tcpip_bypass(struct sk_msg_md *msg)
+int tcp_bypass(struct sk_msg_md *msg)
 {
     struct  sock_key key = {};
     int ret=0;
     sk_msg_extract4_key(msg, &key);
     //定义在 include/uapi/linux/bpf.h 中,所有内核提供的函数都在这里
-    ret=bpf_msg_redirect_hash(msg, &sock_ops_map, &key, BPF_F_INGRESS);
+    ret=bpf_msg_redirect_hash(msg, &socks_map, &key, BPF_F_INGRESS);
     printk("redir msg from %d to %d and ret: %d\n", msg->local_port,
                 (bpf_htonl(msg->remote_port)), ret);
     return SK_PASS;
 }
-
-char ____license[] __section("license") = "GPL";
-int _version __section("version") = 1;
