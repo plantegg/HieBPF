@@ -1,4 +1,6 @@
 #include <linux/bpf.h>
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_endian.h>
 
 #include "tcp_bypass.h"
 
@@ -49,7 +51,7 @@ void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
 	// insert the source socket in the sock_ops_map
 	//定义在 include/uapi/linux/bpf.h 中,OS 提供的能力
 	//bpf.h 种的函数被libbpf 重新在 bpf_helper_defs.h 中封装
-	int ret = sock_hash_update(skops, &sock_ops_map, &key, BPF_NOEXIST);
+	int ret = bpf_sock_hash_update(skops, &sock_ops_map, &key, BPF_NOEXIST);
 	printk("<<< ipv4 op = %d, port %d --> %d\n", 
 		skops->op, skops->local_port, bpf_ntohl(skops->remote_port));
 	if (ret != 0) {
@@ -80,7 +82,7 @@ int bpf_tcpip_bypass(struct sk_msg_md *msg)
     int ret=0;
     sk_msg_extract4_key(msg, &key);
     //定义在 include/uapi/linux/bpf.h 中,所有内核提供的函数都在这里
-    ret=msg_redirect_hash(msg, &sock_ops_map, &key, BPF_F_INGRESS);
+    ret=bpf_msg_redirect_hash(msg, &sock_ops_map, &key, BPF_F_INGRESS);
     printk("redir msg from %d to %d and ret: %d\n", msg->local_port,
                 (bpf_htonl(msg->remote_port)), ret);
     return SK_PASS;
