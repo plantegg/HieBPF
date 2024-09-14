@@ -17,8 +17,6 @@ void sk_msg_extract4_key(struct sk_msg_md *msg,
 
 	key->dport = (bpf_htonl(msg->local_port) >> 16);
 	key->sport = FORCE_READ(msg->remote_port) >> 16;
-	//key->dport = (FORCE_READ(msg->local_port) >> 16);
-	//key->sport = (bpf_htonl(msg->remote_port) >> 16);
 }
 
 /*
@@ -40,7 +38,7 @@ void sk_extractv4_key(struct bpf_sock_ops *ops,
 }
 
 static inline
-void bpf_sock_ops_ipv4(struct bpf_sock_ops *skops)
+void sock_ops_ipv4(struct bpf_sock_ops *skops)
 {
 	struct sock_key key = {};
 
@@ -68,7 +66,7 @@ int sockops_v4(struct bpf_sock_ops *skops)
         case BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB:
         case BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB:
 		if (skops->family == 2) { //AF_INET
-                        bpf_sock_ops_ipv4(skops);
+                        sock_ops_ipv4(skops);
 		}
                 break;
         default:
