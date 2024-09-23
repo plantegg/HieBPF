@@ -17,6 +17,8 @@ clang -O2 -g -target bpf  -I.output/ -I../../libbpf/include/uapi -I../../vmlinux
 # Load and attach the bpf_sockops_v4 program
 bpftool prog load tcp_bypass_ops.bpf.o "/sys/fs/bpf/bpf_sockops"
 bpftool cgroup attach "/tmp/unified/" sock_ops pinned "/sys/fs/bpf/bpf_sockops"
+#bpftool cgroup attach /run/sockops/ sock_ops id XXX
+
 
 # Extract the id of the sockhash map used by the bpf_sockops_v4 program
 # This map is then pinned to the bpf virtual file system

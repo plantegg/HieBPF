@@ -1,14 +1,10 @@
-# os-eBPF
-eBPF to achieve TCPIP bypass, TPROXY, etc.
+# 修改 Socket 参数
 
-### Achieving socket data redirection bypassing TCPIP
-Checkout the README in sockredir directory
+## 目的
 
-
+通过动态修改socket options 的参数，比如初始拥塞窗口大小是 10，对一些大数据传输场景我们希望一上来有更大的初始窗口，避免较长的慢启动，那么可以针对某些端口/ip 设置一个更大的初始窗口
 
 ## 运行
-
-以 HieBPF/sockops 为例
 
 1. 先下载 [libbpf-bootstrap](https://github.com/libbpf/libbpf-bootstrap)  到本地: git clone --recurse-submodules git@github.com:libbpf/libbpf-bootstrap.git
 2. 然后下载本程序放到 libbpf-bootstrap/examples/ 下
@@ -58,4 +54,32 @@ total 1.5M
 -rwxr-xr-x 1 root root 1.4M Sep 23 09:57 sockops  //最终用户态的可执行文件
 ```
 
-## 
+## sockops.c
+
+这是个用户态的程序，负责加载编译后的 sockops.bpf.c 到内核并执行 attach，最后卸载该程序，整个 sockops.c 执行的操作可以通过 load.sh 来完成
+
+也可以在通过 strace ./sockops 来观察加载/attach 具体调用了哪些 OS 提供的 bpf API，并通过 strace 执行 load.sh 里面的命令进行对比
+
+ ## 其它
+
+这只是修改初始拥塞窗口，还有更多任何 socket options 参数都可以通过类似方式来修改。比如接收/发送 buffer：
+
+```
+SO_RCVBUF
+SO_SNDBUF
+SO_MAX_PACING_RATE
+SO_PRIORITY
+SO_RCVLOWAT
+SO_MARK
+TCP_CONGESTION
+TCP_BPF_IW  //初始拥塞窗口
+TCP_BPF_SNDCWND_CLAMP
+```
+
+这些值可以在内核里都到其定义：https://github.com/torvalds/linux/blob/v5.10/include/uapi/linux/bpf.h#L4756
+
+
+
+## 参考文档
+
+https://arthurchiao.art/blog/bpf-advanced-notes-5-zh/ 
